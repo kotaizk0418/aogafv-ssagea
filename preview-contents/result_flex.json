@@ -1,0 +1,242 @@
+{
+    "type": "carousel",
+    "contents": [
+      {
+        "type": "bubble",
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "判定結果",
+              "size": "lg",
+              "align": "center",
+              "weight": "bold"
+            },
+            {
+              "type": "separator",
+              "color": "#666666",
+              "margin": "sm"
+            },
+            {
+              "type": "text",
+              "text": "現在の正解率　75.80%",
+              "size": "xs",
+              "align": "center"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [],
+              "paddingAll": "10px"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "image",
+                  "url": "https://pbs.twimg.com/media/Fywsbs7aIAEoG_8?format=jpg&name=small",
+                  "size": "xxs",
+                  "align": "start",
+                  "margin": "xxl"
+                },
+                {
+                  "type": "text",
+                  "text": "100.00 %",
+                  "size": "xl",
+                  "margin": "sm"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "image",
+                  "url": "https://pbs.twimg.com/media/Fywsbs8agAE5Eo8?format=jpg&name=small",
+                  "size": "xxs",
+                  "align": "start",
+                  "margin": "xxl"
+                },
+                {
+                  "type": "text",
+                  "text": "100.00 %",
+                  "size": "xl",
+                  "margin": "sm"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [],
+              "paddingAll": "xl"
+            },
+            {
+              "type": "separator",
+              "color": "#666666"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "separator",
+                  "color": "#666666"
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・この判別及び確立は目安です",
+                      "size": "sm",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "・100%と表記していても確実ではありません",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "・また、このAIはアジアのScolopendra属を学習データとして扱っています。その他の画像で算出される数値は無関係であり、実質ランダムのものになります",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    }
+                  ],
+                  "margin": "md",
+                  "paddingAll": "xs"
+                },
+                {
+                  "type": "separator",
+                  "color": "#666666"
+                }
+              ],
+              "backgroundColor": "#6FFFFF"
+            },
+            {
+              "type": "separator",
+              "color": "#666666"
+            }
+          ]
+        }
+      },
+      {
+        "type": "bubble",
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "精度を高めるコツ",
+              "size": "lg",
+              "weight": "bold",
+              "align": "center"
+            },
+            {
+              "type": "separator",
+              "color": "#666666"
+            },
+            {
+              "type": "box",
+              "layout": "horizontal",
+              "contents": [
+                {
+                  "type": "separator",
+                  "color": "#666666"
+                },
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "・アダルト個体の写真にする",
+                      "size": "sm",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "・背景がなるべくムカデと同化していない写真を使う",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "・同じ個体を数パターン撮影、送信する",
+                      "size": "sm",
+                      "wrap": true,
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "・太り過ぎず痩せすぎずな写真を使う",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "・画像のノイズがなるべく少ない写真を使う",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "・スクショなどはムカデのみが写るようにトリミングする",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "・画像の輝度や彩度をいじっていない写真を使う",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "・側面より真上から撮った写真を使う",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    },
+                    {
+                      "type": "text",
+                      "text": "・なるべくムカデの全体が映るようにしてください。抱卵画像などは学習させていません",
+                      "size": "sm",
+                      "align": "center",
+                      "wrap": true
+                    }
+                  ],
+                  "margin": "md",
+                  "paddingAll": "xs"
+                },
+                {
+                  "type": "separator",
+                  "color": "#666666"
+                }
+              ],
+              "backgroundColor": "#6FFFFF"
+            },
+            {
+              "type": "separator",
+              "color": "#666666"
+            }
+          ]
+        }
+      }
+    ]
+  }

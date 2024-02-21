@@ -1,0 +1,390 @@
+{
+    "type": "carousel",
+    "contents": [
+      {
+        "type": "bubble",
+        "size": "kilo",
+        "hero": {
+          "type": "image",
+          "size": "full",
+          "aspectMode": "cover",
+          "aspectRatio": "320:213",
+          "url": "https://pbs.twimg.com/media/Fywa4W7aQAAl9up?format=jpg&name=large",
+          "action": {
+            "type": "uri",
+            "label": "action",
+            "uri": "https://twitter.com/kimomushis"
+          }
+        },
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "text",
+              "text": "追加ありがとうございます。お問い合わせはこちら",
+              "size": "10px",
+              "color": "#8c8c8c",
+              "align": "center"
+            },
+            {
+              "type": "text",
+              "text": "Twitter",
+              "size": "xxs",
+              "color": "#8c8c8c",
+              "align": "center"
+            },
+            {
+              "type": "text",
+              "text": "害のある虫専門店　Kimomushi",
+              "weight": "bold",
+              "wrap": true,
+              "size": "md",
+              "margin": "lg",
+              "align": "center"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "baseline",
+                  "spacing": "sm",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "wrap": true,
+                      "color": "#8c8c8c",
+                      "size": "xs",
+                      "flex": 5,
+                      "text": "https://twitter.com/kimomushis",
+                      "align": "center"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "spacing": "sm",
+          "paddingAll": "13px",
+          "action": {
+            "type": "uri",
+            "label": "action",
+            "uri": "https://twitter.com/kimomushis"
+          }
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "kilo",
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "image",
+              "url": "https://pbs.twimg.com/media/FtQIsW8aYAA5lfn?format=jpg&name=large",
+              "aspectMode": "cover",
+              "aspectRatio": "1:1",
+              "size": "full",
+              "gravity": "center"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [],
+              "background": {
+                "type": "linearGradient",
+                "angle": "0deg",
+                "startColor": "#000000",
+                "endColor": "#00000099"
+              },
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "position": "absolute"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "このアカウントがすること",
+                      "color": "#FFFFFF",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "wrap": true,
+                      "text": "入荷情報などの配信",
+                      "color": "#FFFFFF",
+                      "weight": "bold",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "wrap": true,
+                      "color": "#FFFFFF",
+                      "weight": "bold",
+                      "text": "ムカデ雌雄判別AI(テスト運用中)",
+                      "align": "center"
+                    }
+                  ],
+                  "offsetBottom": "0px",
+                  "offsetStart": "0px",
+                  "offsetEnd": "0px",
+                  "paddingAll": "10px",
+                  "position": "absolute",
+                  "backgroundColor": "#C0C0C0CC",
+                  "cornerRadius": "md"
+                }
+              ],
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "paddingAll": "40px",
+              "position": "absolute"
+            }
+          ],
+          "spacing": "sm",
+          "paddingAll": "0px"
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "kilo",
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "image",
+              "url": "https://pbs.twimg.com/media/FtBCtlvagAA0N3z?format=jpg&name=large",
+              "aspectMode": "cover",
+              "aspectRatio": "1:1",
+              "size": "full",
+              "gravity": "center"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [],
+              "background": {
+                "type": "linearGradient",
+                "angle": "0deg",
+                "startColor": "#000000",
+                "endColor": "#00000099"
+              },
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "position": "absolute"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "AIの使い方",
+                      "color": "#FFFFFF",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "wrap": true,
+                      "text": "ムカデの画像を送信すると判定結果が返信されます",
+                      "color": "#FFFFFF",
+                      "weight": "bold",
+                      "align": "center"
+                    }
+                  ],
+                  "offsetBottom": "0px",
+                  "offsetStart": "0px",
+                  "offsetEnd": "0px",
+                  "paddingAll": "10px",
+                  "position": "absolute",
+                  "backgroundColor": "#C0C0C0CC",
+                  "cornerRadius": "md"
+                }
+              ],
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "paddingAll": "40px",
+              "position": "absolute"
+            }
+          ],
+          "spacing": "sm",
+          "paddingAll": "0px"
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "kilo",
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "image",
+              "url": "https://pbs.twimg.com/media/Fx2TXJWaIAMWrKa?format=jpg&name=large",
+              "aspectMode": "cover",
+              "aspectRatio": "1:1",
+              "size": "full",
+              "gravity": "center"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [],
+              "background": {
+                "type": "linearGradient",
+                "angle": "0deg",
+                "startColor": "#000000",
+                "endColor": "#00000099"
+              },
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "position": "absolute"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "wrap": true,
+                      "text": "アップデート予定一覧",
+                      "color": "#FFFFFF",
+                      "weight": "bold",
+                      "align": "center"
+                    },
+                    {
+                      "type": "text",
+                      "text": "Tap!",
+                      "align": "center",
+                      "action": {
+                        "type": "uri",
+                        "label": "action",
+                        "uri": "https://kimomushi-0557d371731a.herokuapp.com/"
+                      },
+                      "decoration": "underline",
+                      "color": "#FFF666"
+                    }
+                  ],
+                  "offsetBottom": "0px",
+                  "offsetStart": "0px",
+                  "offsetEnd": "0px",
+                  "paddingAll": "10px",
+                  "position": "absolute",
+                  "backgroundColor": "#C0C0C0CC",
+                  "cornerRadius": "md"
+                }
+              ],
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "paddingAll": "40px",
+              "position": "absolute"
+            }
+          ],
+          "spacing": "sm",
+          "paddingAll": "0px"
+        }
+      },
+      {
+        "type": "bubble",
+        "size": "kilo",
+        "body": {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [
+            {
+              "type": "image",
+              "url": "https://pbs.twimg.com/media/FtA241PaYAIcdw0?format=jpg&name=large",
+              "aspectMode": "cover",
+              "aspectRatio": "1:1",
+              "size": "full",
+              "gravity": "center"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [],
+              "background": {
+                "type": "linearGradient",
+                "angle": "0deg",
+                "startColor": "#000000",
+                "endColor": "#00000099"
+              },
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "position": "absolute"
+            },
+            {
+              "type": "box",
+              "layout": "vertical",
+              "contents": [
+                {
+                  "type": "box",
+                  "layout": "vertical",
+                  "contents": [
+                    {
+                      "type": "text",
+                      "text": "現在の正解率は 75.80 %",
+                      "color": "#FFFFFF",
+                      "weight": "bold"
+                    },
+                    {
+                      "type": "text",
+                      "text": "※目安です。",
+                      "size": "xxs",
+                      "color": "#FFFFFF"
+                    },
+                    {
+                      "type": "text",
+                      "text": "v. 1.0.0",
+                      "size": "xxs",
+                      "align": "end"
+                    }
+                  ],
+                  "offsetBottom": "0px",
+                  "offsetStart": "0px",
+                  "offsetEnd": "0px",
+                  "paddingAll": "10px",
+                  "position": "absolute",
+                  "borderColor": "#C0C0C0CC"
+                }
+              ],
+              "offsetBottom": "0px",
+              "offsetStart": "0px",
+              "offsetEnd": "0px",
+              "paddingAll": "33px",
+              "position": "absolute",
+              "backgroundColor": "#C0C0C0CC",
+              "cornerRadius": "md"
+            }
+          ],
+          "spacing": "sm",
+          "paddingAll": "0px"
+        }
+      }
+    ]
+  }
