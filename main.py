@@ -14,8 +14,6 @@ from pathlib import Path
 import json
 import os
 
-os.system("ls")
-print("----")
 os.system("pwd")
 from api import Commands
 from ml.sex import sex
@@ -31,12 +29,12 @@ line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 command = Commands(line_bot_api)
 
-model_dir = "/opt/render/project/src/data/cnn_sexDataV3ModelV6"
+model_dir = "./data/cnn_sexDataV3ModelV12"
 model     = load_model(model_dir)
 
 @app.route("/")
 def index():
-    with open("/opt/render/project/src/preview-contents/index.html") as f:
+    with open("./preview-contents/index.html") as f:
         return f.read()
 
 
@@ -65,7 +63,7 @@ def handle_message(event):
     if res == "ok":
         return
     
-with open("/opt/render/project/src/preview-contents/help_flex.json", "r") as f:
+with open("./preview-contents/help_flex.json", "r") as f:
     help_flex = json.load(f)
 
 
@@ -81,14 +79,14 @@ def handle_image(event):
     # message_idから画像のバイナリデータを取得
     message_content = line_bot_api.get_message_content(message_id)
 
-    with open(Path(f"/opt/render/project/src/static/images/{message_id}.jpg").absolute(), "wb") as f:
+    with open(Path(f"./static/images/{message_id}.jpg").absolute(), "wb") as f:
         # バイナリを1024バイトずつ書き込む
         for chunk in message_content.iter_content():
             f.write(chunk)
     
-    l = sex(f"/opt/render/project/src/static/images/{message_id}.jpg", model=model)
+    l = sex(f"./static/images/{message_id}.jpg", model=model)
 
-    with open("/opt/render/project/src/preview-contents/result_flex.json", "r") as f:
+    with open("./preview-contents/result_flex.json", "r") as f:
         content = json.load(f)
 
     content["contents"][0]["body"]["contents"][4]["contents"][1]["text"] = l["メス"]
