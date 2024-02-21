@@ -14,6 +14,8 @@ from pathlib import Path
 import json
 import os
 
+os.system("ls")
+print("----")
 os.system("pwd")
 from api import Commands
 from ml.sex import sex
