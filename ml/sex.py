@@ -49,7 +49,7 @@ if __name__ == "__main__":
     model = load_model(model_dir)
     
 
-    directory = "/Users/kota-izk/Documents/worksplace/Python/centipedeAI/male_2/"
+    directory = "/Users/kota-izk/Documents/worksplace/Python/centipedeAI/female/"
     os.system(f"rm {directory}.DS_Store")
     for f in Path(directory).rglob('*'):
         path = directory + f.stem + '.jpg'
