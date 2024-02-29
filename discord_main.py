@@ -4,7 +4,7 @@ from keras.models import load_model
 from ml.sex import sex
 
 # ボットのトークン
-TOKEN = "MTIxMjM2MjAwODU0MDc0NTcyOA.GyTI2i.tTSSqqaCytJpkoV96AaQ43ta6h6w4gXY1cmKY8"
+TOKEN = open("token.txt", "r").read()
 
 # Discord Intentsの設定
 intents = discord.Intents.default()
