@@ -33,18 +33,20 @@ async def on_message(message):
     
     # 画像が添付されているかチェック
     if len(message.attachments) > 0:
-        total_images = len(message.attachments)
-        for index, attachment in enumerate(message.attachments, start=1):
-            if attachment.content_type.startswith("image"):
-                # 画像のダウンロード
-                image_data = await attachment.read()
-                # 一時ファイルとして保存
-                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-                    temp_file.write(image_data)
-                save_file_path = temp_file.name
-                result = sex(save_file_path, model=model)
-                text = f"メス: {result['メス']}\nオス: {result['オス']}"
-                return await message.channel.send(text)
+        if message.channel.id == "1212363487284830268":
+            total_images = len(message.attachments)
+            for index, attachment in enumerate(message.attachments, start=1):
+                if attachment.content_type.startswith("image"):
+                    # 画像のダウンロード
+                    image_data = await attachment.read()
+                    # 一時ファイルとして保存
+                    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                        temp_file.write(image_data)
+                    save_file_path = temp_file.name
+                    result = sex(save_file_path, model=model)
+                    text = f"メス: {result['メス']}\nオス: {result['オス']}"
+                    print(message.channel.id)
+                    return await message.channel.send(text)
 
                     
 
