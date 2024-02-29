@@ -33,7 +33,7 @@ async def on_message(message):
     
     # 画像が添付されているかチェック
     if len(message.attachments) > 0:
-        if message.channel.id == "1212363487284830268":
+        if message.channel.id == 1212363487284830268:
             total_images = len(message.attachments)
             for index, attachment in enumerate(message.attachments, start=1):
                 if attachment.content_type.startswith("image"):
