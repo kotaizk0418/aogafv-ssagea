@@ -32,6 +32,8 @@ async def on_message(message):
 
     
     # 画像が添付されているかチェック
+    if message.text == "test":
+        return await message.channel.send("ok")
     if len(message.attachments) > 0:
         if message.channel.id == 1212363487284830268:
             total_images = len(message.attachments)
