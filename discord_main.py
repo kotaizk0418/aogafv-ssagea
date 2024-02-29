@@ -2,10 +2,11 @@ import discord
 import tempfile
 from keras.models import load_model
 from ml.sex import sex
+import sys
 
 # ボットのトークン
-TOKEN = open("token.txt", "r").read()
-
+#TOKEN = open("token.txt", "r").read()
+TOKEN = sys.argv[1]
 # Discord Intentsの設定
 intents = discord.Intents.default()
 intents.message_content = True
