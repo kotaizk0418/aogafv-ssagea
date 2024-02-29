@@ -1,6 +1,7 @@
 import discord
 import tempfile
 from keras.models import load_model
+from keep_alive import keep_alive
 from ml.sex import sex
 import sys
 
@@ -55,4 +56,5 @@ async def on_message(message):
 
 if __name__ == "__main__":
     # ボットを起動
+    keep_alive()
     client.run(TOKEN)
