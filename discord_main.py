@@ -9,8 +9,7 @@ import sys
 #TOKEN = open("token.txt", "r").read()
 TOKEN = sys.argv[1]
 # Discord Intentsの設定
-intents = discord.Intents.default()
-intents.message_content = True
+intents = discord.Intents.all()
 
 
 # Discordクライアントを作成
@@ -25,6 +24,14 @@ async def on_ready():
     print(f"Logged in as {client.user.name}")
 
 
+"""新規メンバー参加時に実行されるイベントハンドラ"""
+@client.event
+async def on_member_join(member):
+    guild = member.guild
+    channel = discord.utils.get(guild.text_channels, name="挨拶-greeting")
+
+    return await channel.send(f'{member.mention} さんよろしくお願いします。\nルールチャンネルにて同意をお願いします。')
+    
 @client.event
 async def on_message(message):
     # メッセージがボット自身のものであれば無視
