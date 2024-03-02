@@ -3,6 +3,7 @@ import tempfile
 from keras.models import load_model
 from keep_alive import keep_alive
 from ml.sex import sex
+import subprocess
 import sys
 
 # ボットのトークン
@@ -22,6 +23,14 @@ model     = load_model(model_dir)
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user.name}")
+    if len(sys.argv) == 3:
+        print("Restarted")
+        target = client.get_channel(int(sys.argv[2]))
+        print(target)
+        try:
+            await target.send("restarted.")
+        except:
+            pass
 
 
 """新規メンバー参加時に実行されるイベントハンドラ"""
@@ -31,7 +40,8 @@ async def on_member_join(member):
     channel = discord.utils.get(guild.text_channels, name="挨拶-greeting")
 
     return await channel.send(f'{member.mention} さんよろしくお願いします。\nルールチャンネルにて同意をお願いします。')
-    
+
+
 @client.event
 async def on_message(message):
     # メッセージがボット自身のものであれば無視
@@ -42,6 +52,28 @@ async def on_message(message):
     # 画像が添付されているかチェック
     if message.content == "test":
         return await message.channel.send("ok")
+    
+    elif message.content == "exit":
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" in role_name_list:
+            await message.channel.send("exiting.")
+            return sys.exit()
+
+    elif message.content == "reboot":
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" in role_name_list:
+            await message.channel.send("exiting.")
+            subprocess.Popen(["python3", "discord_main.py", sys.argv[1], str(message.channel.id)])
+            return sys.exit()
+
     if len(message.attachments) > 0:
         if message.channel.id == 1212363487284830268:
             total_images = len(message.attachments)
