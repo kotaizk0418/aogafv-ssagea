@@ -4,6 +4,7 @@ from keras.models import load_model
 from keep_alive import keep_alive
 from ml.sex import sex
 import subprocess
+import json
 import sys
 
 # ボットのトークン
@@ -51,6 +52,20 @@ async def on_message(message):
     
     # 画像が添付されているかチェック
     if message.content == "test":
+        return await message.channel.send("ok")
+    
+    elif message.content == "json":
+        test_data = {
+            "test": "text",
+            "testn": 1
+        }
+
+        with open("test.json", "w") as f:
+            json.dump(test_data, f)
+
+        with open("test.json", "r") as f:
+            r = json.load(f)
+        print(r)
         return await message.channel.send("ok")
     
     elif message.content == "exit":
