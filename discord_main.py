@@ -54,6 +54,9 @@ async def on_message(message):
     if message.content == "test":
         return await message.channel.send("ok")
     
+    elif message.content == "user":
+
+        return await message.channel.send(message.author.id)
     elif message.content == "json":
         test_data = {
             "test": "text",

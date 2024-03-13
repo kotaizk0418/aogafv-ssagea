@@ -7,3 +7,5 @@ Pillow==9.5.0
 tensorflow-cpu==2.12.0
 discord==2.3.2
 discord.py==2.3.2
+psycopg2==2.9.9
+psycopg2-binary==2.9.5
