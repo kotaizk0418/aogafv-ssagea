@@ -4,8 +4,10 @@ from keras.models import load_model
 from keep_alive import keep_alive
 from ml.sex import sex
 import subprocess
+import psycopg2
 import json
 import sys
+import os
 
 # ボットのトークン
 #TOKEN = open("token.txt", "r").read()
@@ -20,6 +22,48 @@ client = discord.Client(intents=intents)
 model_dir = "./data/cnn_sexDataV3ModelV12"
 model     = load_model(model_dir)
 
+def get_connection():
+    dsn = os.environ.get('DATABASE_URL')
+    return psycopg2.connect(dsn)
+
+def calc_count(data):
+    l = False
+    data = list(data)
+    #data[uid, level, tcount]
+    data[2] += 1
+
+    if data[2] % (data[1]*(30+data[1])) == 0:
+        data[1] += 1
+       l = True
+    return data, l
+
+async def count_and_level_up_user(member):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            #cur.execute('SELECT * FROM userlevel;')
+            #row = cur.fetchall()
+            cur.execute('SELECT * FROM userlevel WHERE uid = %s', (str(member.author.id),))
+            row = cur.fetchone()
+            
+            print(row)
+            if row:
+                d, l = calc_count(row)
+                print(d)
+                cur.execute("UPDATE userlevel SET (level, tcount) = (%s, %s) WHERE uid = %s", (d[1], d[2], d[0]))
+                if l:
+                    if d[1] > 9:
+                        role = discord.utils.get(member.guild.roles, name="レベル10")
+                        await member.author.add_roles(role)
+                    return await member.channel.send("レベルアップ")
+            elif not row:
+                cur.execute("INSERT INTO userlevel VALUES (%s, %s, %s)", (str(member.author.id), 1, 1,))
+                print("INSERT: %s".format(member.author.id))
+                return
+            
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute('SELECT * FROM userlevel')
+    return
 
 @client.event
 async def on_ready():
@@ -49,27 +93,20 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    
+    if len(message.content) > 3:
+        await count_and_level_up_user(message)
+
     # 画像が添付されているかチェック
     if message.content == "test":
         return await message.channel.send("ok")
     
     elif message.content == "user":
-
         return await message.channel.send(message.author.id)
-    elif message.content == "json":
-        test_data = {
-            "test": "text",
-            "testn": 1
-        }
-
-        with open("test.json", "w") as f:
-            json.dump(test_data, f)
-
-        with open("test.json", "r") as f:
-            r = json.load(f)
-        print(r)
-        return await message.channel.send("ok")
+    
+    elif message.content == "embed":
+        embed = discord.Embed(title="TITLE", description='', color=0xff0000)
+        embed.add_field(name="", value="VALUE", inline=False)
+        return await message.channel.send(embed=embed)
     
     elif message.content == "exit":
         chkrls = message.author.roles
@@ -93,7 +130,8 @@ async def on_message(message):
             return sys.exit()
 
     if len(message.attachments) > 0:
-        if message.channel.id == 1212363487284830268:
+        #if message.channel.id == 1212363487284830268:
+        if True:
             total_images = len(message.attachments)
             for index, attachment in enumerate(message.attachments, start=1):
                 if attachment.content_type.startswith("image"):
@@ -106,8 +144,10 @@ async def on_message(message):
                     result = sex(save_file_path, model=model)
                     text = f"メス: {result['メス']}\nオス: {result['オス']}"
                     print(message.channel.id)
-                    return await message.channel.send(text)
-
+                    embed = discord.Embed(title="判定結果", description='', color=0x9e76b4)
+                    embed.add_field(name="", value=text, inline=False)
+                    return await message.channel.send(embed=embed)
+    
                     
 
 
