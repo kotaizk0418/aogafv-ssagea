@@ -34,7 +34,7 @@ def calc_count(data):
 
     if data[2] % (data[1]*(30+data[1])) == 0:
         data[1] += 1
-       l = True
+        l = True
     return data, l
 
 async def count_and_level_up_user(member):
