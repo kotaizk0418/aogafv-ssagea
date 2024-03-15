@@ -24,7 +24,7 @@ model     = load_model(model_dir)
 
 def get_connection():
     dsn = os.environ.get('DATABASE_URL')
-    return psycopg2.connect(dsn=dsn)
+    return psycopg2.connect(dsn=eval(dsn))
 
 def calc_count(data):
     l = False
