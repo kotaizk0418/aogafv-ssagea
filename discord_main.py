@@ -24,7 +24,7 @@ model     = load_model(model_dir)
 
 def get_connection():
     dsn = os.environ.get('DATABASE_URL')
-    return psycopg2.connect(dsn)
+    return psycopg2.connect(dsn=dsn)
 
 def calc_count(data):
     l = False
@@ -130,8 +130,8 @@ async def on_message(message):
             return sys.exit()
 
     if len(message.attachments) > 0:
-        #if message.channel.id == 1212363487284830268:
-        if True:
+        if message.channel.id == 1212363487284830268:
+        #if True:
             total_images = len(message.attachments)
             for index, attachment in enumerate(message.attachments, start=1):
                 if attachment.content_type.startswith("image"):
