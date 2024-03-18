@@ -84,7 +84,7 @@ async def on_member_join(member):
     guild = member.guild
     channel = discord.utils.get(guild.text_channels, name="挨拶-greeting")
 
-    return await channel.send(f'{member.mention} さんよろしくお願いします。\nルールチャンネルにて同意をお願いします。')
+    return await channel.send(f'{member.mention} さんよろしくお願いします。\n <#1212995044206968932> にて同意をお願いします。\n <#1212689053523378197> で自己紹介などしてくれると嬉しいです。')
 
 
 @client.event
@@ -107,6 +107,29 @@ async def on_message(message):
         embed = discord.Embed(title="TITLE", description='', color=0xff0000)
         embed.add_field(name="", value="VALUE", inline=False)
         return await message.channel.send(embed=embed)
+    
+    elif message.content == "users":
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" not in role_name_list:
+            return
+        
+        text = ""
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT * FROM userlevel;')
+                row = cur.fetchall()
+        
+        for uid, lv, ct in row:
+            pro = await client.fetch_user(uid)
+            text += f"Name: {pro.name}" + "\n" \
+                    f"Uid : {uid}"      + "\n" \
+                    f"Level: {lv}"      + "\n" \
+                    f"Count: {ct}"      + "\n\n"
+        return await message.channel.send(text)
     
     elif message.content == "exit":
         chkrls = message.author.roles
