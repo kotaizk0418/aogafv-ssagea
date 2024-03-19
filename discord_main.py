@@ -34,6 +34,7 @@ def calc_count(data):
 
     if data[2] % (data[1]*(30+data[1])) == 0:
         data[1] += 1
+        data[2] = 0
         l = True
     return data, l
 
@@ -131,6 +132,14 @@ async def on_message(message):
                     f"Count: {ct}"      + "\n\n"
         return await message.channel.send(text)
     
+    elif message.content == "me":
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT * FROM userlevel WHERE uid = %s', (str(message.author.id),))
+                row = cur.fetchone()
+        row = list(row)
+        return await message.channel.send(f"レベル　{row[1]} です。")
+
     elif message.content == "exit":
         chkrls = message.author.roles
         role_name_list = []
