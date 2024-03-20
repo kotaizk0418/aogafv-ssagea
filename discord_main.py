@@ -110,9 +110,9 @@ async def on_message(message):
     elif message.content == "embed":
         embed = discord.Embed(title="TITLE", description='', color=0xff0000)
         embed.add_field(name="", value="VALUE", inline=False)
-        embed = discord.Embed(title="TITLE", description='', color=0xff0000)
-        embed.add_field(name="", value="VALUE", inline=False)
-        return await message.channel.send(embed=embed)
+        embed2 = discord.Embed(title="TITLE", description='', color=0xff0000)
+        embed2.add_field(name="", value="VALUE", inline=False)
+        return await message.channel.send(embeds=[embed, embed2])
     
     elif message.content == "users":
         chkrls = message.author.roles
