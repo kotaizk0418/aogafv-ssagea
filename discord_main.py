@@ -55,6 +55,9 @@ async def count_and_level_up_user(member):
                     if d[1] > 9:
                         role = discord.utils.get(member.guild.roles, name="レベル10")
                         await member.author.add_roles(role)
+                    elif d[1] > 2:
+                        role = discord.utils.get(member.guild.roles, name="レベル3")
+                        await member.author.add_roles(role)
                     return await member.channel.send("レベルアップ")
             elif not row:
                 cur.execute("INSERT INTO userlevel VALUES (%s, %s, %s)", (str(member.author.id), 1, 1,))
@@ -105,6 +108,8 @@ async def on_message(message):
         return await message.channel.send(message.author.id)
     
     elif message.content == "embed":
+        embed = discord.Embed(title="TITLE", description='', color=0xff0000)
+        embed.add_field(name="", value="VALUE", inline=False)
         embed = discord.Embed(title="TITLE", description='', color=0xff0000)
         embed.add_field(name="", value="VALUE", inline=False)
         return await message.channel.send(embed=embed)
