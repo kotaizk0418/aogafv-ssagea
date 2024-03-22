@@ -115,6 +115,19 @@ async def on_message(message):
     elif message.content == "user":
         return await message.channel.send(message.author.id)
     
+    elif message.content.startswith("run "):
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" not in role_name_list:
+            return
+        
+        print = message.channel.send
+        eval(message.content[4:])
+        print = sys.__stdout__
+        
     elif message.content.startswith("poll "):
 
         title = message.content.split()[1]
