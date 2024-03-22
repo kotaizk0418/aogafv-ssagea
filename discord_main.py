@@ -103,7 +103,7 @@ async def on_message(message):
         return
 
     if len(message.content) > 3:
-        x5 = message.channel == 1213451326751772693
+        x5 = message.channel.id == 1213451326751772693
         try:
             await count_and_level_up_user(message, x5)
         except:
