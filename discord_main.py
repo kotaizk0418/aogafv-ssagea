@@ -8,6 +8,7 @@ import psycopg2
 import json
 import emoji
 import sys
+import logging
 import os
 
 # ボットのトークン
@@ -104,6 +105,7 @@ async def on_message(message):
 
     if len(message.content) > 3:
         x5 = message.channel.id == 1213451326751772693
+        logging.log(message.channel.id)
         try:
             await count_and_level_up_user(message, x5)
         except:
@@ -127,7 +129,7 @@ async def on_message(message):
         print = message.channel.send
         eval(message.content[4:])
         print = sys.__stdout__
-        
+
     elif message.content.startswith("poll "):
 
         title = message.content.split()[1]
