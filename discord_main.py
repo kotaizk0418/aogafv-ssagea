@@ -105,7 +105,7 @@ async def on_message(message):
 
     if len(message.content) > 3:
         x5 = message.channel.id == 1213451326751772693
-        logging.log(str(message.channel.id))
+        
         try:
             await count_and_level_up_user(message, x5)
         except:
