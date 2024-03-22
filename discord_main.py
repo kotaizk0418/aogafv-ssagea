@@ -6,6 +6,7 @@ from ml.sex import sex
 import subprocess
 import psycopg2
 import json
+import emoji
 import sys
 import os
 
@@ -25,20 +26,24 @@ model     = load_model(model_dir)
 def get_connection():
     dsn = os.environ.get('DATABASE_URL')
     return psycopg2.connect(dsn=eval(dsn))
+    #return psycopg2.connect(dsn=dsn)
 
-def calc_count(data):
+def calc_count(data, x5):
     l = False
     data = list(data)
     #data[uid, level, tcount]
-    data[2] += 1
+    if x5:
+        data[2] += 5
+    else:
+        data[2] += 1
 
-    if data[2] % (data[1]*(30+data[1])) == 0:
+    if data[2] >= data[1]*(30+data[1]):
         data[1] += 1
         data[2] = 0
         l = True
     return data, l
 
-async def count_and_level_up_user(member):
+async def count_and_level_up_user(member, x5):
     with get_connection() as conn:
         with conn.cursor() as cur:
             #cur.execute('SELECT * FROM userlevel;')
@@ -48,7 +53,7 @@ async def count_and_level_up_user(member):
             
             print(row)
             if row:
-                d, l = calc_count(row)
+                d, l = calc_count(row, x5)
                 print(d)
                 cur.execute("UPDATE userlevel SET (level, tcount) = (%s, %s) WHERE uid = %s", (d[1], d[2], d[0]))
                 if l:
@@ -98,8 +103,11 @@ async def on_message(message):
         return
 
     if len(message.content) > 3:
-        await count_and_level_up_user(message)
-
+        x5 = message.channel == 1213451326751772693
+        try:
+            await count_and_level_up_user(message, x5)
+        except:
+            pass
     # 画像が添付されているかチェック
     if message.content == "test":
         return await message.channel.send("ok")
@@ -107,12 +115,40 @@ async def on_message(message):
     elif message.content == "user":
         return await message.channel.send(message.author.id)
     
-    elif message.content == "embed":
-        embed = discord.Embed(title="TITLE", description='', color=0xff0000)
-        embed.add_field(name="", value="VALUE", inline=False)
-        embed2 = discord.Embed(title="TITLE", description='', color=0xff0000)
-        embed2.add_field(name="", value="VALUE", inline=False)
-        return await message.channel.send(embeds=[embed, embed2])
+    elif message.content.startswith("poll "):
+
+        title = message.content.split()[1]
+        value = "".join(message.content.split()[2:])
+        emojis = [c for c in value if c in emoji.EMOJI_DATA]
+        # 絵文字ごとにメッセージを分割
+        splitted_messages = [value]
+        for emoji_char in emojis:
+            new_splitted_messages = []
+            for part in splitted_messages:
+                new_splitted_messages.extend(part.split(emoji_char))
+            splitted_messages = new_splitted_messages
+        
+        # 絵文字と対応する文字列の辞書を作成
+        emoji_dict = {}
+        for emoji_char, part in zip(emojis, splitted_messages):
+            emoji_dict[emoji_char] = part
+        
+        # 辞書を表示
+        print(emoji_dict)
+        embed = discord.Embed(title=title, description="", color=0xfff000)
+        pro = await client.fetch_user(message.author.id)
+        
+        embed.set_author(name=pro.display_name, # Botのユーザー名
+                     url="", # titleのurlのようにnameをリンクにできる。botのWebサイトとかGithubとか
+                     icon_url=message.author.avatar # Botのアイコンを設定してみる
+                     )
+        for k, v in emoji_dict.items():
+            embed.add_field(name=f"{k} {v}", value="", inline=False)
+        
+        msg = await message.channel.send(embeds=[embed])
+        
+        for k, v in emoji_dict.items():
+            await msg.add_reaction(k)
     
     elif message.content == "users":
         chkrls = message.author.roles
