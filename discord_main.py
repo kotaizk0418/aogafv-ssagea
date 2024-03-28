@@ -4,11 +4,13 @@ from keras.models import load_model
 from keep_alive import keep_alive
 from ml.sex import sex
 import subprocess
+import datetime
 import psycopg2
 import json
 import emoji
 import sys
 import logging
+import time
 import os
 
 # ボットのトークン
@@ -29,6 +31,14 @@ def get_connection():
     return psycopg2.connect(dsn=eval(dsn))
     #return psycopg2.connect(dsn=dsn)
 
+async def send_logs(text):
+    id = 1222867960637554819
+    target = client.get_channel(id)
+
+    text = f"-{time.ctime()}\n" + \
+           f"`{text}`"
+    return await target.send(text)
+
 def calc_count(data, x5):
     l = False
     data = list(data)
@@ -36,7 +46,11 @@ def calc_count(data, x5):
     if x5:
         data[2] += 5
     else:
-        data[2] += 1
+        dt2 = datetime.datetime.now()
+        if dt2.hour in [19, 20, 21, 22]:
+            data[2] += 2
+        else:
+            data[2] += 1
 
     if data[2] >= data[1]*(30+data[1]):
         data[1] += 1
@@ -55,6 +69,11 @@ async def count_and_level_up_user(member, x5):
             print(row)
             if row:
                 d, l = calc_count(row, x5)
+                if x5:
+                    await send_logs(f"{member.author.id} の経験値が5上がりました。")
+                dt2 = datetime.datetime.now()
+                if dt2.hour in [19, 20, 21, 22]:
+                    await send_logs(f"{member.author.id} の経験値が2上がりました。")
                 print(d)
                 cur.execute("UPDATE userlevel SET (level, tcount) = (%s, %s) WHERE uid = %s", (d[1], d[2], d[0]))
                 if l:
@@ -112,7 +131,9 @@ async def on_message(message):
             pass
     # 画像が添付されているかチェック
     if message.content == "test":
-        return await message.channel.send("ok")
+        ctime = time.ctime()
+        dt2 = datetime.datetime.now()
+        return await message.channel.send(f"{dt2.hour}: {ctime}")
     
     elif message.content == "user":
         return await message.channel.send(message.author.id)
