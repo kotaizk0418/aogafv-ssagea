@@ -36,8 +36,8 @@ def get_connection():
 async def send_logs(text):
     id = 1222867960637554819
     target = client.get_channel(id)
-
-    text = f"-{time.ctime()}\n" + \
+    dt2 = datetime.now(ZoneInfo("Asia/Tokyo"))
+    text = f"-{dt2}\n" + \
            f"`{text}`"
     return await target.send(text)
 
@@ -125,7 +125,10 @@ async def on_message(message):
         return
 
     if len(message.content) > 3:
-        x5 = message.channel.id == 1213451326751772693
+        if message.channel.id == 1213451326751772693:
+            x5 = True
+        else:
+            x5 = False
         
         try:
             await count_and_level_up_user(message, x5)
