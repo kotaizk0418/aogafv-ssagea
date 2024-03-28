@@ -4,7 +4,9 @@ from keras.models import load_model
 from keep_alive import keep_alive
 from ml.sex import sex
 import subprocess
-import datetime
+from datetime import datetime, timedelta, timezone
+from dateutil import tz
+from zoneinfo import ZoneInfo
 import psycopg2
 import json
 import emoji
@@ -46,7 +48,7 @@ def calc_count(data, x5):
     if x5:
         data[2] += 5
     else:
-        dt2 = datetime.datetime.now()
+        dt2 = datetime.now(ZoneInfo("Asia/Tokyo"))
         if dt2.hour in [19, 20, 21, 22]:
             data[2] += 2
         else:
@@ -71,7 +73,7 @@ async def count_and_level_up_user(member, x5):
                 d, l = calc_count(row, x5)
                 if x5:
                     await send_logs(f"{member.author.id} の経験値が5上がりました。")
-                dt2 = datetime.datetime.now()
+                dt2 = datetime.now(ZoneInfo("Asia/Tokyo"))
                 if dt2.hour in [19, 20, 21, 22]:
                     await send_logs(f"{member.author.id} の経験値が2上がりました。")
                 print(d)
@@ -132,7 +134,7 @@ async def on_message(message):
     # 画像が添付されているかチェック
     if message.content == "test":
         ctime = time.ctime()
-        dt2 = datetime.datetime.now()
+        dt2 = datetime.now(ZoneInfo("Asia/Tokyo"))
         return await message.channel.send(f"{dt2.hour}: {ctime}")
     
     elif message.content == "user":
