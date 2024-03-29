@@ -122,7 +122,7 @@ async def on_thread_create(channel):
     
     print(f'create forum: {channel.name} ({channel.owner_id})')
     print(dir(channel))
-    await channel.send(f"{channel.guild.roles}")
+    #await channel.send(f"{channel.guild.roles}")
     x5 = True
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -144,10 +144,10 @@ async def on_thread_create(channel):
                 if l:
                     if d[1] > 9:
                         role = discord.utils.get(channel.guild.roles, name="レベル10")
-                        await channel.author.add_roles(role)
+                        await channel.owner.add_roles(role)
                     elif d[1] > 2:
                         role = discord.utils.get(channel.guild.roles, name="レベル3")
-                        await channel.author.add_roles(role)
+                        await channel.owner.add_roles(role)
                     return await channel.send("レベルアップ")
             elif not row:
                 cur.execute("INSERT INTO userlevel VALUES (%s, %s, %s)", (str(channel.owner_id), 1, 1,))
