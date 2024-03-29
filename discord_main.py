@@ -72,10 +72,10 @@ async def count_and_level_up_user(member, x5):
             if row:
                 d, l = calc_count(row, x5)
                 if x5:
-                    await send_logs(f"{member.author.id} の経験値が5上がりました。")
+                    await send_logs(f"{member.author.id} の経験値が5上がりました。\n{d}: {l}")
                 dt2 = datetime.now(ZoneInfo("Asia/Tokyo"))
                 if dt2.hour in [19, 20, 21, 22]:
-                    await send_logs(f"{member.author.id} の経験値が2上がりました。")
+                    await send_logs(f"{member.author.id} の経験値が2上がりました。\n{d}: {l}")
                 print(d)
                 cur.execute("UPDATE userlevel SET (level, tcount) = (%s, %s) WHERE uid = %s", (d[1], d[2], d[0]))
                 if l:
@@ -122,6 +122,7 @@ async def on_thread_create(channel):
     
     print(f'create forum: {channel.name} ({channel.owner_id})')
     print(dir(channel))
+    await channel.send(f"{channel.guild.roles}")
     x5 = True
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -134,10 +135,10 @@ async def on_thread_create(channel):
             if row:
                 d, l = calc_count(row, x5)
                 if x5:
-                    await send_logs(f"{channel.owner_id} の経験値が5上がりました。")
+                    await send_logs(f"{channel.owner_id} の経験値が5上がりました。\n{d}: {l}")
                 dt2 = datetime.now(ZoneInfo("Asia/Tokyo"))
                 if dt2.hour in [19, 20, 21, 22]:
-                    await send_logs(f"{channel.owner_id} の経験値が2上がりました。")
+                    await send_logs(f"{channel.owner_id} の経験値が2上がりました。\n{d}: {l}")
                 print(d)
                 cur.execute("UPDATE userlevel SET (level, tcount) = (%s, %s) WHERE uid = %s", (d[1], d[2], d[0]))
                 if l:
