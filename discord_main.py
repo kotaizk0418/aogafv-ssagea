@@ -78,6 +78,7 @@ async def count_and_level_up_user(member, x5):
                     await send_logs(f"{member.author.id} の経験値が2上がりました。\n{d}: {l}")
                 print(d)
                 cur.execute("UPDATE userlevel SET (level, tcount) = (%s, %s) WHERE uid = %s", (d[1], d[2], d[0]))
+                logging.info("UPDATE userlevel SET (level, tcount) = (%s, %s) WHERE uid = %s".format(d[1], d[2], d[0]))
                 if l:
                     if d[1] > 9:
                         role = discord.utils.get(member.guild.roles, name="レベル10")
@@ -88,7 +89,7 @@ async def count_and_level_up_user(member, x5):
                     return await member.channel.send("レベルアップ")
             elif not row:
                 cur.execute("INSERT INTO userlevel VALUES (%s, %s, %s)", (str(member.author.id), 1, 1,))
-                print("INSERT: %s".format(member.author.id))
+                logging.info("INSERT: %s".format(member.author.id))
                 return
             
     with get_connection() as conn:
@@ -112,9 +113,30 @@ async def on_ready():
 """新規メンバー参加時に実行されるイベントハンドラ"""
 @client.event
 async def on_member_join(member):
+    
     guild = member.guild
     channel = discord.utils.get(guild.text_channels, name="挨拶-greeting")
+    invites = await member.guild.invites()
+    # インバイトをループして、参加したメンバーがどのインバイトを使用したかを確認
+    for invite in invites:
+        # インバイトの情報を取得
+        invite_info = await client.fetch_invite(invite)
+        # インバイトのメンバーカウントと使用回数が増えているかを確認
+        print(invite.uses, invite_info.uses)
+        if invite_info.uses == None:
+            invite_info.uses = 0
 
+        if invite.uses == None:
+            invite.uses = 0
+        
+        if invite_info.uses > invite.uses:
+            # インバイトの作成者が誰であるか
+            inviter = invite.inviter
+            # インバイトのURL
+            invite_url = invite.url
+            # ここで、招待リンクの作成者やリンクそのものを使用して、必要な処理を行うことができます。
+            print(f"{member} joined using invite created by {inviter} - {invite_url}")
+            break
     return await channel.send(f'{member.mention} さんよろしくお願いします。\n <#1212995044206968932> にて同意をお願いします。\n <#1212689053523378197> で自己紹介などしてくれると嬉しいです。')
 
 @client.event
@@ -177,6 +199,7 @@ async def on_message(message):
             await count_and_level_up_user(message, x5)
         except:
             pass
+
     # 画像が添付されているかチェック
     if message.content == "test":
         ctime = time.ctime()
