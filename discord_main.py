@@ -209,9 +209,12 @@ async def on_message(message):
     elif message.content == "user":
         return await message.channel.send(message.author.id)
     
+    elif message.content == "accept":
+        role = discord.utils.get(message.channel.guild.roles, name="メンションされていい人")
+        await message.channel.owner.add_roles(role)
+        return await message.channel.send("ok.")
 
     elif message.content.startswith("poll "):
-
         title = message.content.split()[1]
         value = "".join(message.content.split()[2:])
         emojis = [c for c in value if c in emoji.EMOJI_DATA]
