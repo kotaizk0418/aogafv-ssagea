@@ -211,7 +211,7 @@ async def on_message(message):
     
     elif message.content == "accept":
         role = discord.utils.get(message.channel.guild.roles, name="メンションされていい人")
-        await message.channel.owner.add_roles(role)
+        await message.member.author.add_roles(role)
         return await message.channel.send("ok.")
 
     elif message.content.startswith("poll "):
