@@ -110,33 +110,23 @@ async def on_ready():
             pass
 
 
+@client.event
+async def on_voice_state_update(member, before, after):
+    print(after.channel)
+    if before.channel is None and after.channel is not None:
+        target = client.get_channel("1229365047206219887")
+        await target.send(f"<@&1227926580869988404> VCが開かれました。\n#{after.channel}")
+
 """新規メンバー参加時に実行されるイベントハンドラ"""
 @client.event
 async def on_member_join(member):
     
     guild = member.guild
     channel = discord.utils.get(guild.text_channels, name="挨拶-greeting")
-    invites = await member.guild.invites()
+    
     # インバイトをループして、参加したメンバーがどのインバイトを使用したかを確認
-    for invite in invites:
-        # インバイトの情報を取得
-        invite_info = await client.fetch_invite(invite)
-        # インバイトのメンバーカウントと使用回数が増えているかを確認
-        print(invite.uses, invite_info.uses)
-        if invite_info.uses == None:
-            invite_info.uses = 0
-
-        if invite.uses == None:
-            invite.uses = 0
-        
-        if invite_info.uses > invite.uses:
-            # インバイトの作成者が誰であるか
-            inviter = invite.inviter
-            # インバイトのURL
-            invite_url = invite.url
-            # ここで、招待リンクの作成者やリンクそのものを使用して、必要な処理を行うことができます。
-            print(f"{member} joined using invite created by {inviter} - {invite_url}")
-            break
+    print(f"{member.guild.id}")
+            
     return await channel.send(f'{member.mention} さんよろしくお願いします。\n <#1212995044206968932> にて同意をお願いします。\n <#1212689053523378197> で自己紹介などしてくれると嬉しいです。')
 
 @client.event
@@ -209,8 +199,21 @@ async def on_message(message):
     elif message.content == "user":
         return await message.channel.send(message.author.id)
     
+    elif message.content == "my role":
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        print(role_name_list)
+        return await message.channel.send(f"{role_name_list}")
+    
     elif message.content == "accept":
         role = discord.utils.get(message.channel.guild.roles, name="メンションされていい人")
+        await message.author.add_roles(role)
+        return await message.channel.send("ok.")
+    
+    elif message.content == "hunter":
+        role = discord.utils.get(message.channel.guild.roles, name="採り子")
         await message.author.add_roles(role)
         return await message.channel.send("ok.")
 
