@@ -110,12 +110,12 @@ async def on_ready():
             pass
 
 
-@client.event
-async def on_voice_state_update(member, before, after):
-    print(after.channel)
-    if before.channel is None and after.channel is not None:
-        target = client.get_channel("1229365047206219887")
-        await target.send(f"<@&1227926580869988404> VCが開かれました。\n#{after.channel}")
+# @client.event
+# async def on_voice_state_update(member, before, after):
+#     print(after.channel)
+#     if before.channel is None and after.channel is not None:
+#         target = client.get_channel("1229365047206219887")
+#         await target.send(f"<@&1227926580869988404> VCが開かれました。\n#{after.channel}")
 
 """新規メンバー参加時に実行されるイベントハンドラ"""
 @client.event
