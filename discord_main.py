@@ -1,12 +1,15 @@
 import discord
 import tempfile
 from keras.models import load_model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, EarlyStopping, Callback
 from keep_alive import keep_alive
 from ml.sex import sex
 import subprocess
 from datetime import datetime, timedelta, timezone
 from dateutil import tz
 from zoneinfo import ZoneInfo
+import asyncio
 import psycopg2
 import json
 import emoji
@@ -15,6 +18,52 @@ import logging
 import time
 import os
 
+import tensorflow as tf
+from collections import Counter
+
+from image_text_processor import Title, Text, Inline, image_processing
+
+
+class CustomImageDataGenerator(ImageDataGenerator):
+    def _get_batches_of_transformed_samples(self, index_array):
+        batch_x = []
+        batch_y = []
+        for i in index_array:
+            image_path = self.filepaths[i]
+            img = load_valid_image(image_path)
+            if img is not None:
+                x = self.image_data_generator.standardize(self.image_data_generator.random_transform(img))
+                batch_x.append(x)
+                batch_y.append(self.labels[i])
+        return np.array(batch_x), np.array(batch_y)
+
+async def train_model(existing_model, train_generator, val_generator, batch_size, epoch):
+    loop = asyncio.get_event_loop()
+    tf.config.run_functions_eagerly(True)
+    callbacks = [
+        ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=5, min_lr=1e-7),
+        EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+    ]
+    train_labels = train_generator.classes
+    counter = Counter(train_labels)
+    max_count = float(max(counter.values()))
+    class_weight = {class_id: max_count/num_images for class_id, num_images in counter.items()}
+    history = await loop.run_in_executor(
+        None,
+        lambda: existing_model.fit(
+            train_generator,
+            validation_data=val_generator,
+            steps_per_epoch=train_generator.samples // batch_size,
+            validation_steps=val_generator.samples // batch_size,
+            epochs=epoch,
+            class_weight=class_weight,
+            callbacks=callbacks
+        )
+    )
+    return history
+
+DATA_PATH = os.environ.get("DATA_PATH") if os.environ.get("DATA_PATH") else ""
+SELECTED_MODEL = ""
 # ボットのトークン
 #TOKEN = open("token.txt", "r").read()
 TOKEN = sys.argv[1]
@@ -25,11 +74,13 @@ intents = discord.Intents.all()
 # Discordクライアントを作成
 client = discord.Client(intents=intents)
 
-model_dir = "./data/cnn_sexDataV3ModelV12"
+model_dir = "./models/path_to_save_updated_model.h5"
+model_dir = "./data/model_b.h5"
 model     = load_model(model_dir)
 
 def get_connection():
     dsn = os.environ.get('DATABASE_URL')
+    dsn = "'postgresql://discord_bot_data_user:BdimL061db6iEusp0P8ftr4OnyyLj2Th@dpg-cnoph1vsc6pc73b7d3ug-a.oregon-postgres.render.com/discord_bot_data'"
     return psycopg2.connect(dsn=eval(dsn))
     #return psycopg2.connect(dsn=dsn)
 
@@ -60,6 +111,24 @@ def calc_count(data, x5):
         l = True
     return data, l
 
+
+with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM model WHERE id = 1;")
+            row = cur.fetchone()
+            SELECTED_MODEL = row[1]
+
+print(SELECTED_MODEL)
+
+def update_select_model(model_path):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("UPDATE model SET model = (%s) WHERE id = 1", (model_path,))
+            cur.execute("SELECT * FROM model WHERE id = 1;")
+            row = cur.fetchone()
+            SELECTED_MODEL = row[1]
+            print("update to", SELECTED_MODEL)
+            
 async def count_and_level_up_user(member, x5):
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -109,7 +178,16 @@ async def on_ready():
         except:
             pass
 
-
+def count_files(directory):
+    # 指定されたディレクトリ内のファイルリストを取得
+    try:
+        files = os.listdir(directory)
+        # ファイルの数をカウント
+        file_count = len(files)
+        return file_count
+    except FileNotFoundError:
+        print(f"Error: Directory '{directory}' not found.")
+        return -1
 # @client.event
 # async def on_voice_state_update(member, before, after):
 #     print(after.channel)
@@ -175,6 +253,7 @@ async def on_thread_create(channel):
 
 @client.event
 async def on_message(message):
+    global SELECTED_MODEL
     # メッセージがボット自身のものであれば無視
     if message.author == client.user:
         return
@@ -302,9 +381,158 @@ async def on_message(message):
             await message.channel.send("exiting.")
             subprocess.Popen(["python3", "discord_main.py", sys.argv[1], str(message.channel.id)])
             return sys.exit()
+        
+    elif message.content == "dataset":
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" in role_name_list:
+            male_count = count_files(DATA_PATH+"dataset/male/")
+            female_count = count_files(DATA_PATH+"dataset/female/")
+            return await message.channel.send(f"male: {male_count}\nfemale: {female_count}")
+    
+    elif message.content == "models":
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" in role_name_list:
+            files = os.listdir(DATA_PATH+"models")
+            text = ""
+            for file in files:
+                text += f"- {file}\n"
+            return await message.channel.send(text)
+        
+    elif message.content.startswith("model "):
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" in role_name_list:
+            text = message.content.split()
+            path = DATA_PATH + f"models/{text[1]}"
+            print(path)
+            try:
+                load_model(path)
+            except:
+                return await message.channel.send("error")
+            SELECTED_MODEL = path
+            update_select_model(path)
+            return await message.channel.send("ok")
+    
+    elif message.content == "eval":
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" in role_name_list:
+            model = load_model(SELECTED_MODEL)
+            
+            datagen = CustomImageDataGenerator(
+                rescale=1./255,  # 画像のリスケーリング
+                shear_range=0.2,  # シアリングの範囲
+                zoom_range=0.2,  # ズームの範囲
+                horizontal_flip=True  # 水平方向の反転
+            )
+            male_count   = count_files(DATA_PATH+"dataset/male/")
+            female_count = count_files(DATA_PATH+"dataset/female/")
+            batch_size = 2
+            dataset_path = DATA_PATH+"dataset/"
+
+            test_generator = datagen.flow_from_directory(
+                dataset_path,
+                target_size=(224, 224),
+                batch_size=batch_size,
+                class_mode='binary'
+            )
+            loss, accuracy = model.evaluate(test_generator, verbose=0)
+
+            return await message.channel.send(f"model: {SELECTED_MODEL}\nacc: {accuracy}\nloss: {loss}")
+
+    elif message.content.startswith("train "):
+        chkrls = message.author.roles
+        role_name_list = []
+        for role in chkrls:  # roleにはRoleオブジェクトが入っている
+            role_name_list.append(role.name)
+        
+        if "管理者" in role_name_list:
+            text = message.content
+            epoch = int(text.split()[1])
+            batch_size = int(text.split()[2])
+            existing_model = load_model('data/model_b.h5')
+            dataset_path = DATA_PATH+"dataset/"
+
+            await message.channel.send("train start..")
+
+            datagen = CustomImageDataGenerator(
+                rescale=1./255,  # 画像のリスケーリング
+                shear_range=0.2,  # シアリングの範囲
+                zoom_range=0.2,  # ズームの範囲
+                horizontal_flip=True,  # 水平方向の反転
+                validation_split=0.5 
+            )
+            male_count   = count_files(DATA_PATH+"dataset/male/")
+            female_count = count_files(DATA_PATH+"dataset/female/")
+            batch_size = batch_size
+
+            train_generator = datagen.flow_from_directory(
+                dataset_path,
+                target_size=(224, 224),
+                batch_size=batch_size,
+                class_mode='binary'
+            )
+            val_generator = datagen.flow_from_directory(
+                dataset_path,
+                target_size=(224, 224),
+                batch_size=batch_size,
+                class_mode='binary'
+            )
+            lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+                initial_learning_rate=0.0001,
+                decay_steps=300,
+                decay_rate=0.6
+            )
+            existing_model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=lr_schedule),
+                       loss='binary_crossentropy',
+                       metrics=['accuracy'],
+                       run_eagerly=True)
+
+            history = await train_model(existing_model, train_generator, val_generator, batch_size, epoch)
+
+            train_acc = history.history['accuracy'][-1]
+            train_loss = history.history['loss'][-1]
+            await message.channel.send(f"train acc: {train_acc}\nloss: {train_loss}")
+            dt2 = datetime.now(ZoneInfo("Asia/Tokyo"))
+            existing_model.save(DATA_PATH+f'models/{dt2.month}-{dt2.day}_updated_model.h5')
+            await message.channel.send(file=discord.File(DATA_PATH+f'models/{dt2.month}-{dt2.day}_updated_model.h5'))
 
     if len(message.attachments) > 0:
-        if message.channel.id == 1212363487284830268:
+        if message.channel.id in [1259256195823308872, 1259187729607037040]: #female train
+            for index, attachment in enumerate(message.attachments, start=1):
+                if attachment.content_type.startswith("image"):
+                    # 画像のダウンロード
+                    image_data = await attachment.read()
+                    # 一時ファイルとして保存
+                    with open(DATA_PATH+f"dataset/female/{attachment.filename}.jpg", "wb") as f:
+                        f.write(image_data)
+            return await message.channel.send("提供ありがとうございます。雌雄を間違えた場合は送信した画像は絶対に削除せず、画像に対してリプライで「ミス」と送信しておいてください。")
+            
+        if message.channel.id in [1259256210792775853, 1259187630478856292]: #male train
+            for index, attachment in enumerate(message.attachments, start=1):
+                if attachment.content_type.startswith("image"):
+                    # 画像のダウンロード
+                    image_data = await attachment.read()
+                    # 一時ファイルとして保存
+                    with open(DATA_PATH+f"dataset/male/{attachment.filename}.jpg", "wb") as f:
+                        f.write(image_data)
+            return await message.channel.send("提供ありがとうございます。雌雄を間違えた場合は送信した画像は絶対に削除せず、画像に対してリプライで「ミス」と送信しておいてください。")
+        
+        if message.channel.id in [1212363487284830268, 1258773854478798880, 1258776074326769664, 1258786734846775307]:
         #if True:
             total_images = len(message.attachments)
             for index, attachment in enumerate(message.attachments, start=1):
@@ -315,12 +543,30 @@ async def on_message(message):
                     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
                         temp_file.write(image_data)
                     save_file_path = temp_file.name
-                    result = sex(save_file_path, model=model)
-                    text = f"メス: {result['メス']}\nオス: {result['オス']}"
+                    await message.channel.send("判定中..")
+                    result = sex(save_file_path, model=load_model(SELECTED_MODEL), augment_times=10)
                     print(message.channel.id)
-                    embed = discord.Embed(title="判定結果", description='', color=0x9e76b4)
-                    embed.add_field(name="", value=text, inline=False)
-                    return await message.channel.send(embed=embed)
+
+                    objects = [
+                        Title("判定結果", bold=True),
+                        Title(" ", bold=True)
+                    ]
+
+                    for k,v in result.items():
+                        objects.append(Inline([Text(f"{k} :  ", bold=True), Text(v, bold=True)]))
+                    
+                    image_processing(save_file_path, objects, vertical_alignment="middle")
+                    msg = await message.channel.send(file=discord.File("output.jpg"))
+                    # embed = discord.Embed(title="判定結果", description="100%正しいわけではありません。avgとは画像を拡張し、推論した結果の平均値です。", color=0x9e76b4)
+                    # embed.add_field(name="", value="", inline=False)
+                    # for k, v in result.items():
+                    #     embed.add_field(name=k, value=v, inline=False)
+                    # embed.add_field(name="", value="", inline=False)
+                    # embed.add_field(name="", value="正しければ⭕️、外れていれば❌、不明な場合は❓", inline=False)
+                    # msg = await message.channel.send(embed=embed)
+                    msg = await message.channel.send("100%正しいわけではありません。avgとは画像を拡張し、推論した結果の平均値です。\n正しければ⭕️、外れていれば❌、不明な場合は❓をお願いします。")
+                    for k, v in {'⭕': 'a', '❌': '️b', '❓': 'c'}.items():
+                        await msg.add_reaction(k)
     
                     
 
