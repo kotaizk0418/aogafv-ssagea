@@ -548,7 +548,7 @@ async def on_message(message):
                     if not centioede_check(save_file_path):
                         return await message.channel.send("ムカデを検出できませんでした")
                     await message.channel.send("判定中..")
-                    result = sex(save_file_path, model=load_model(SELECTED_MODEL), augment_times=10)
+                    result = sex(temp_file.name, model=load_model(SELECTED_MODEL), augment_times=10)
                     print(message.channel.id)
 
                     objects = [
