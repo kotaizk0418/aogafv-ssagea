@@ -20,6 +20,8 @@ import os
 
 import tensorflow as tf
 from collections import Counter
+import torch
+import cv2
 
 from image_text_processor import Title, Text, Inline, image_processing
 
@@ -532,7 +534,7 @@ async def on_message(message):
                         f.write(image_data)
             return await message.channel.send("提供ありがとうございます。雌雄を間違えた場合は送信した画像は絶対に削除せず、画像に対してリプライで「ミス」と送信しておいてください。")
         
-        if message.channel.id in [1212363487284830268, 1258773854478798880, 1258776074326769664, 1258786734846775307]:
+        if message.channel.id in [1212363487284830268, 1258773854478798880, 1258776074326769664, 1258786734846775307, 1213395104551669760]:
         #if True:
             total_images = len(message.attachments)
             for index, attachment in enumerate(message.attachments, start=1):
@@ -543,6 +545,8 @@ async def on_message(message):
                     with tempfile.NamedTemporaryFile(delete=False) as temp_file:
                         temp_file.write(image_data)
                     save_file_path = temp_file.name
+                    if not centioede_check(save_file_path):
+                        return await message.channel.send("ムカデを検出できませんでした")
                     await message.channel.send("判定中..")
                     result = sex(save_file_path, model=load_model(SELECTED_MODEL), augment_times=10)
                     print(message.channel.id)
@@ -569,7 +573,27 @@ async def on_message(message):
                         await msg.add_reaction(k)
     
                     
-
+def centioede_check(image_path):
+    # モデルの読み込み
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path='ml/best_model.pt')
+    
+    # 画像の読み込み
+    img = cv2.imread(image_path)
+    if img is None:
+        raise ValueError(f"Image not found at {image_path}")
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    
+    # 推論
+    results = model(img_rgb)
+    
+    # 結果の取得
+    results_list = results.xyxy[0].cpu().numpy()  # [[xmin, ymin, xmax, ymax, confidence, class], ...]
+    print(results_list)
+    
+    if len(results_list) == 0:
+        print("No objects detected.")
+        return False
+    return True
 
 if __name__ == "__main__":
     # ボットを起動
